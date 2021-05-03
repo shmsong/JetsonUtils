@@ -174,25 +174,7 @@ RUN pip install --no-cache-dir hypothesis pyyaml pytest
 RUN pip install --no-cache-dir matplotlib
 RUN pip install --no-cache-dir pillow==6.1 lmdb
 RUN pip install --no-cache-dir ck==1.55.5 absl-py pycocotools typing_extensions
-
-# Install OpenCV into our venv,
-# Note: Scripts are provided to build and install OpenCV from the
-# GitHub repository. These are no longer used by default in favour of the
-# opencv-python package, in this case opencv-python-headless.
-# Uncomment code block '1' below, and comment out code block '2' to build
-# from the GitHub sources.
-# --
-# 1 - build from GitHub sources:
-#COPY scripts/build-opencv.sh $PACKAGE_DIR/.
-#RUN $PACKAGE_DIR/build-opencv.sh
-# --
-# 2 - install opencv-python-headless
 RUN pip install --no-cache-dir scikit-build
-# enum34 is not compatable with Python 3.6+, and not required
-# it is installed as a dependency for an earlier package and needs
-# to be removed in order for the OpenCV build to complete.
-RUN pip uninstall enum34 -y
-RUN pip install --no-cache-dir --no-binary :all: opencv-python-headless
 
 CMD ["bash", "-l"]
 
@@ -211,9 +193,7 @@ ENV ONEDNN_VERSION="v2.2"
 ENV VISION_VERSION="v0.9.1"
 
 # Use a PACKAGE_DIR in userspace
-WORKDIR /home/$DOCKER_USER
-USER $DOCKER_USER
-ENV PACKAGE_DIR=/home/$DOCKER_USER/$PACKAGE_DIR
+ENV PACKAGE_DIR=/opt/$PACKAGE_DIR
 RUN mkdir -p $PACKAGE_DIR
 
 # Copy in the Python virtual environment
@@ -221,11 +201,11 @@ ENV VENV_DIR=/home/$DOCKER_USER/python3-venv
 COPY --chown=$DOCKER_USER:$DOCKER_USER --from=pytorch-tools $VENV_DIR /home/$DOCKER_USER/python3-venv
 ENV PATH="$VENV_DIR/bin:$PATH"
 
-# Build PyTorch
-COPY scripts/build-pytorch.sh $PACKAGE_DIR/.
-COPY patches/pytorch_onednn.patch $PACKAGE_DIR/.
-RUN $PACKAGE_DIR/build-pytorch.sh
-RUN pip install torchvision==$VISION_VERSION
+# # Build PyTorch
+# COPY scripts/build-pytorch.sh $PACKAGE_DIR/.
+# COPY patches/pytorch_onednn.patch $PACKAGE_DIR/.
+# RUN $PACKAGE_DIR/build-pytorch.sh
+# RUN pip install torchvision==$VISION_VERSION
 
 CMD ["bash", "-l"]
 
@@ -235,12 +215,8 @@ CMD ["bash", "-l"]
 FROM pytorch-libs AS pytorch
 ARG njobs
 
-WORKDIR /home/$DOCKER_USER
-USER $DOCKER_USER
-
 # Copy in the Python virtual environment
-ENV VENV_DIR=/home/$DOCKER_USER/python3-venv
-COPY --chown=$DOCKER_USER:$DOCKER_USER --from=pytorch-dev $VENV_DIR /home/$DOCKER_USER/python3-venv
+ENV VENV_DIR=/opt/python3-venv
 ENV PATH="$VENV_DIR/bin:$PATH"
 
 # Examples, benchmarks, and associated 'helper' scripts will be installed within
