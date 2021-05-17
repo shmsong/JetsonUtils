@@ -15,9 +15,7 @@
 # limitations under the License.
 # *******************************************************************************
 
-# ========
-# Stage 1: Base image including OS and key packages
-# ========
+# Dev packages
 ARG njobs
 
 RUN if ! [ "$(arch)" = "aarch64" ] ; then exit 1; fi
@@ -75,6 +73,8 @@ RUN apt-get -y update && \
 # RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 1 --slave /usr/bin/g++ g++ /usr/bin/g++-9 && \
 #     update-alternatives --install /usr/bin/gfortran gfortran /usr/bin/gfortran-9 1
 
+ENV DOCKER_USER="workspace"
+
 # Import profile for bash
 COPY bash_profile /home/$DOCKER_USER/.bash_profile
 
@@ -129,11 +129,9 @@ COPY scripts/build-ninja.sh $PACKAGE_DIR/.
 RUN $PACKAGE_DIR/build-ninja.sh
 ENV PATH=$PROD_DIR/ninja/$NINJA_VERSION:$PATH
 
-# ========
-# Stage 3: install essential python dependencies into a venv
-# ========
-FROM pytorch-libs AS pytorch-tools
-ARG njobs
+# Build Magma from source
+COPY scripts/build-magma.sh $PACKAGE_DIR/.
+RUN $PACKAGE_DIR/build-magma.sh
 ENV NP_MAKE="${njobs}"
 
 # Key version numbers
@@ -176,12 +174,7 @@ RUN pip install --no-cache-dir pillow==6.1 lmdb
 RUN pip install --no-cache-dir ck==1.55.5 absl-py pycocotools typing_extensions
 RUN pip install --no-cache-dir scikit-build
 
-CMD ["bash", "-l"]
-
-# ========
-# Stage 4: build PyTorch
-# ========
-FROM pytorch-libs AS pytorch-dev
+# build PyTorch
 ARG njobs
 ARG onednn_opt
 ENV ONEDNN_BUILD="${onednn_opt}" \
@@ -198,46 +191,9 @@ RUN mkdir -p $PACKAGE_DIR
 
 # Copy in the Python virtual environment
 ENV VENV_DIR=/home/$DOCKER_USER/python3-venv
-COPY --chown=$DOCKER_USER:$DOCKER_USER --from=pytorch-tools $VENV_DIR /home/$DOCKER_USER/python3-venv
 ENV PATH="$VENV_DIR/bin:$PATH"
 
 # # Build PyTorch
-# COPY scripts/build-pytorch.sh $PACKAGE_DIR/.
-# COPY patches/pytorch_onednn.patch $PACKAGE_DIR/.
-# RUN $PACKAGE_DIR/build-pytorch.sh
-# RUN pip install torchvision==$VISION_VERSION
-
-CMD ["bash", "-l"]
-
-# ========
-# Stage 5: Install benchmarks and examples
-# ========
-FROM pytorch-libs AS pytorch
-ARG njobs
-
-# Copy in the Python virtual environment
-ENV VENV_DIR=/opt/python3-venv
-ENV PATH="$VENV_DIR/bin:$PATH"
-
-# Examples, benchmarks, and associated 'helper' scripts will be installed within
-# in $EXAMPLE_DIR.
-ENV EXAMPLE_DIR=/home/$DOCKER_USER/examples
-RUN mkdir -p $EXAMPLE_DIR
-RUN mkdir -p $EXAMPLE_DIR/MLCommons
-
-# Clone and install  MLCommons (MLPerf)
-COPY scripts/build-mlcommons.sh $PACKAGE_DIR/.
-RUN $PACKAGE_DIR/build-mlcommons.sh
-# Copy scripts to download dataset and models
-COPY scripts/download-dataset.sh $EXAMPLE_DIR/MLCommons/.
-COPY scripts/download-model.sh $EXAMPLE_DIR/MLCommons/.
-
-# Install missing Python package dependencies required to run examples
-RUN pip install --no-cache-dir requests
-RUN pip install --no-cache-dir tqdm
-
-# Copy examples
-ENV EXAMPLE_DIR=/home/$DOCKER_USER/examples
-ADD examples $EXAMPLE_DIR
-
-CMD ["bash", "-l"]
+COPY scripts/build-pytorch.sh $PACKAGE_DIR/.
+COPY patches/pytorch_onednn.patch $PACKAGE_DIR/.
+RUN $PACKAGE_DIR/build-pytorch.sh
