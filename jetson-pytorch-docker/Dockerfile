@@ -14,9 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # *******************************************************************************
+FROM nvcr.io/nvidia/l4t-base:r32.5.0
 
 # Dev packages
-ARG njobs
+ARG njobs=8
 
 RUN if ! [ "$(arch)" = "aarch64" ] ; then exit 1; fi
 
@@ -175,7 +176,7 @@ RUN pip install --no-cache-dir ck==1.55.5 absl-py pycocotools typing_extensions
 RUN pip install --no-cache-dir scikit-build
 
 # build PyTorch
-ARG njobs
+ARG njobs=8
 ARG onednn_opt
 ENV ONEDNN_BUILD="${onednn_opt}" \
     NP_MAKE="${njobs}"
