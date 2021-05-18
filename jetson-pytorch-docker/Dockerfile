@@ -151,7 +151,6 @@ ENV NUMPY_VERSION=1.19.5 \
 
 # Using venv means this can be done in userspace
 WORKDIR /home/$DOCKER_USER
-USER $DOCKER_USER
 ENV PACKAGE_DIR=/home/$DOCKER_USER/$PACKAGE_DIR
 RUN mkdir -p $PACKAGE_DIR
 
