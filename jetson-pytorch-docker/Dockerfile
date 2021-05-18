@@ -136,8 +136,8 @@ RUN apt-key adv --fetch-key https://repo.download.nvidia.com/jetson/jetson-ota-p
 RUN add-apt-repository 'deb [arch=arm64] https://repo.download.nvidia.com/jetson/common r32.5 main'
 RUN add-apt-repository 'deb [arch=arm64] https://repo.download.nvidia.com/jetson/t194 r32.5 main'
 
-RUN apt-get install cuda-libraries-dev-10-2
-RUN apt-get install libcublas-dev
+RUN apt-get -y install cuda-libraries-dev-10-2
+RUN apt-get -y install libcublas-dev
 
 # Build Magma from source
 COPY scripts/build-magma.sh $PACKAGE_DIR/.
