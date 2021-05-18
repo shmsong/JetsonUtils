@@ -132,12 +132,12 @@ RUN $PACKAGE_DIR/build-ninja.sh
 ENV PATH=$PROD_DIR/ninja/$NINJA_VERSION:$PATH
 
 # Install CUDA libs:
-apt-key adv --fetch-key https://repo.download.nvidia.com/jetson/jetson-ota-public.asc
-add-apt-repository 'deb [arch=arm64] https://repo.download.nvidia.com/jetson/common r32.5 main'
-add-apt-repository 'deb [arch=arm64] https://repo.download.nvidia.com/jetson/t194 r32.5 main'
+RUN apt-key adv --fetch-key https://repo.download.nvidia.com/jetson/jetson-ota-public.asc
+RUN add-apt-repository 'deb [arch=arm64] https://repo.download.nvidia.com/jetson/common r32.5 main'
+RUN add-apt-repository 'deb [arch=arm64] https://repo.download.nvidia.com/jetson/t194 r32.5 main'
 
-apt-get install cuda-libraries-dev-10-2
-apt-get install libcublas-dev
+RUN apt-get install cuda-libraries-dev-10-2
+RUN apt-get install libcublas-dev
 
 # Build Magma from source
 COPY scripts/build-magma.sh $PACKAGE_DIR/.
