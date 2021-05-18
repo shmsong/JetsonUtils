@@ -172,9 +172,9 @@ RUN $PACKAGE_DIR/build-numpy.sh
 # Install some  basic python packages needed for SciPy
 RUN pip install --no-cache-dir pybind11 pyangbind
 # Build numpy from source, using OpenBLAS for BLAS calls
-COPY scripts/build-scipy.sh $PACKAGE_DIR/.
-COPY patches/site.cfg $PACKAGE_DIR/site.cfg
-RUN $PACKAGE_DIR/build-scipy.sh
+# COPY scripts/build-scipy.sh $PACKAGE_DIR/.
+# COPY patches/site.cfg $PACKAGE_DIR/site.cfg
+# RUN $PACKAGE_DIR/build-scipy.sh
 
 # Install some more essentials.
 RUN pip install --no-cache-dir hypothesis pyyaml pytest
@@ -205,4 +205,4 @@ ENV PATH="$VENV_DIR/bin:$PATH"
 # # Build PyTorch
 COPY scripts/build-pytorch.sh $PACKAGE_DIR/.
 COPY patches/pytorch_onednn.patch $PACKAGE_DIR/.
-RUN $PACKAGE_DIR/build-pytorch.sh
+# RUN $PACKAGE_DIR/build-pytorch.sh
