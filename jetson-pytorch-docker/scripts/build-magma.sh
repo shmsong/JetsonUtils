@@ -6,7 +6,7 @@ cd $PACKAGE_DIR
 
 export CFLAGS="${BASE_CFLAGS} -O3"
 export LDFLAGS="${BASE_LDFLAGS}"
-export CUDADIR=/usr/loca/cuda
+export CUDADIR=/usr/local/cuda
 export OPENBLASDIR=$PROD_DIR/openblas/$OPENBLAS_VERSION
 
 wget http://icl.utk.edu/projectsfiles/magma/downloads/magma-2.5.4.tar.gz
