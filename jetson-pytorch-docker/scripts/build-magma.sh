@@ -13,5 +13,6 @@ wget http://icl.utk.edu/projectsfiles/magma/downloads/magma-2.5.4.tar.gz
 
 tar -xvf magma-2.5.4.tar.gz
 cd magma-2.5.4
-make install prefix=$PROD_DIR/magma
+cp make.inc-examples/make.inc.openblas ./make.inc
+make FORT=gfortran-8 install prefix=$PROD_DIR/magma
 
