@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 set -euo pipefail
 
@@ -8,7 +9,7 @@ export LDFLAGS="${BASE_LDFLAGS}"
 export CUDADIR=/usr/loca/cuda
 export OPENBLASDIR=$PROD_DIR/openblas/$OPENBLAS_VERSION
 
-http://icl.utk.edu/projectsfiles/magma/downloads/magma-2.5.4.tar.gz
+wget http://icl.utk.edu/projectsfiles/magma/downloads/magma-2.5.4.tar.gz
 
 tar -xvf magma-2.5.4.tar.gz
 cd magma-2.5.4

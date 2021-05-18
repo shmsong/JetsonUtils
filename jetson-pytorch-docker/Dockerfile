@@ -121,14 +121,23 @@ ENV OPENBLAS_DIR=$PROD_DIR/openblas/$OPENBLAS_VERSION
 ENV LD_LIBRARY_PATH=$OPENBLAS_DIR/lib:$LD_LIBRARY_PATH
 
 # Build Arm Compute Library from source
-COPY scripts/build-acl.sh $PACKAGE_DIR/.
-RUN $PACKAGE_DIR/build-acl.sh
-ENV ACL_ROOT_DIR=$PROD_DIR/ComputeLibrary
+# Mem overflow on building this need to revisit
+#COPY scripts/build-acl.sh $PACKAGE_DIR/.
+#RUN $PACKAGE_DIR/build-acl.sh
+#ENV ACL_ROOT_DIR=$PROD_DIR/ComputeLibrary
 
 # Build ninja from source
 COPY scripts/build-ninja.sh $PACKAGE_DIR/.
 RUN $PACKAGE_DIR/build-ninja.sh
 ENV PATH=$PROD_DIR/ninja/$NINJA_VERSION:$PATH
+
+# Install CUDA libs:
+apt-key adv --fetch-key https://repo.download.nvidia.com/jetson/jetson-ota-public.asc
+add-apt-repository 'deb [arch=arm64] https://repo.download.nvidia.com/jetson/common r32.5 main'
+add-apt-repository 'deb [arch=arm64] https://repo.download.nvidia.com/jetson/t194 r32.5 main'
+
+apt-get install cuda-libraries-dev-10-2
+apt-get install libcublas-dev
 
 # Build Magma from source
 COPY scripts/build-magma.sh $PACKAGE_DIR/.
