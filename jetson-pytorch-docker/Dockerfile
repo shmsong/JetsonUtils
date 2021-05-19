@@ -204,6 +204,9 @@ ENV PATH="$VENV_DIR/bin:$PATH"
 
 
 from jetson_base AS jetson_pytorch
+# More pytorch dependencies
+apt-get install cuda-nvtx-10-2
+
 # # Build PyTorch
 COPY scripts/build-pytorch.sh $PACKAGE_DIR/.
 RUN $PACKAGE_DIR/build-pytorch.sh
