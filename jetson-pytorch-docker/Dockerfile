@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # *******************************************************************************
-FROM nvcr.io/nvidia/l4t-base:r32.5.0
+FROM nvcr.io/nvidia/l4t-base:r32.5.0 AS jetson_base
 
 # Dev packages
 ARG njobs=8
@@ -202,7 +202,8 @@ RUN mkdir -p $PACKAGE_DIR
 ENV VENV_DIR=/home/$DOCKER_USER/python3-venv
 ENV PATH="$VENV_DIR/bin:$PATH"
 
+
+from jetson_base AS jetson_pytorch
 # # Build PyTorch
 COPY scripts/build-pytorch.sh $PACKAGE_DIR/.
-COPY patches/pytorch_onednn.patch $PACKAGE_DIR/.
-# RUN $PACKAGE_DIR/build-pytorch.sh
+RUN $PACKAGE_DIR/build-pytorch.sh
