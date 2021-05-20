@@ -29,7 +29,7 @@ readonly num_cpus=$(grep -c ^processor /proc/cpuinfo)
 # Clone PyTorch
 git clone ${src_host}/${src_repo}.git
 cd ${src_repo}
-git checkout v$version -b v$version
+# git checkout v$version -b v$version
 git submodule sync
 git submodule update --init --recursive
 
@@ -38,6 +38,8 @@ export USE_MKLDNN="ON"
 # Update the oneDNN tag in third_party/ideep
 cd third_party/ideep/mkl-dnn
 git checkout $ONEDNN_VERSION
+
+export MAGMA_HOME="$PROD_DIR/magma"
 
 cd $PACKAGE_DIR/$src_repo
 
