@@ -115,6 +115,7 @@ COPY scripts/build-cpython.sh $PACKAGE_DIR/.
 RUN $PACKAGE_DIR/build-cpython.sh
 
 # Build OpenBLAS from source
+RUN ln -s  /usr/lib/aarch64-linux-gnu/libgfortran.so.5 /usr/lib/aarch64-linux-gnu/libgfortran.so
 COPY scripts/build-openblas.sh $PACKAGE_DIR/.
 RUN $PACKAGE_DIR/build-openblas.sh
 ENV OPENBLAS_DIR=$PROD_DIR/openblas/$OPENBLAS_VERSION
