@@ -34,5 +34,5 @@ export LDFLAGS="${BASE_LDFLAGS}"
 
 install_dir=$PROD_DIR/$package/$version
 
-make -j $NP_MAKE USE_OPENMP=1
+make -j $NP_MAKE USE_OPENMP=1 FC=gfortran-8
 make -j $NP_MAKE PREFIX=$install_dir install

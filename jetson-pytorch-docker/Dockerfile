@@ -209,4 +209,4 @@ RUN apt-get install cuda-nvtx-10-2
 
 # # Build PyTorch
 COPY scripts/build-pytorch.sh $PACKAGE_DIR/.
-RUN $PACKAGE_DIR/build-pytorch.sh
+# RUN $PACKAGE_DIR/build-pytorch.sh
